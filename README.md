@@ -1,9 +1,11 @@
 # 1-Click Home Assistant & Telegram Smart Alert Stack
 
-[![Ko-fi](https://img.shields.io/badge/Ko--fi-Shop-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/dimiboy/shop)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Get%20Kit%20($4.99)-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/s/0bb16302c6)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 Turnkey Docker configuration, system monitor sensors, and production-tested automations for Home Assistant with instant Telegram alerts for server crashes, high CPU/RAM, storage saturation, and WAN outages.
+
+> **🛒 Get the complete production kit on [Ko-fi Shop](https://ko-fi.com/s/0bb16302c6)** (or Pay-What-You-Want).
 
 ---
 
