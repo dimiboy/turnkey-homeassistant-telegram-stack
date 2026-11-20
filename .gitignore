@@ -1,0 +1,8 @@
+﻿*.png
+!cover.png
+*.py
+!test_telegram_broadcast.py
+*.log
+*.html
+.env
+__pycache__/
