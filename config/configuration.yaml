@@ -1,0 +1,50 @@
+# Home Assistant Core Configuration
+# Turnkey Telegram Alert Stack by DimusTech
+
+default_config:
+
+homeassistant:
+  name: Home Sentinel
+  unit_system: metric
+  time_zone: !env_var TIMEZONE Asia/Jerusalem
+
+# Telegram Bot Integration
+# NOTE: Using platform 'broadcast' (NOT 'polling') to prevent 409 Conflict errors
+# when sharing the bot across multiple services or background tools.
+telegram_bot:
+  - platform: broadcast
+    api_key: !secret telegram_bot_token
+    allowed_chat_ids:
+      - !secret telegram_chat_id
+
+# Notification Service
+notify:
+  - platform: telegram
+    name: telegram_alert
+    chat_id: !secret telegram_chat_id
+
+# System Monitor Sensors
+sensor:
+  - platform: systemmonitor
+    resources:
+      - type: disk_use_percent
+        arg: /config
+      - type: memory_use_percent
+      - type: processor_use
+      - type: last_boot
+      - type: throughput_network_in
+        arg: eth0
+      - type: throughput_network_out
+        arg: eth0
+
+# Binary Sensor: Internet Ping Check
+binary_sensor:
+  - platform: ping
+    host: 1.1.1.1
+    name: "Internet Connectivity"
+    count: 2
+    scan_interval: 30
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml

@@ -1,0 +1,92 @@
+# ==============================================================================
+# Production Turnkey Automations: Telegram Smart Alert Engine
+# ==============================================================================
+
+# 1. Startup & Reboot Notification with System Snapshot
+- id: ha_system_online_alert
+  alias: "System: Home Assistant Boot Notification"
+  trigger:
+    - platform: homeassistant
+      event: start
+  action:
+    - service: notify.telegram_alert
+      data:
+        title: "🟢 <b>Home Sentinel Online</b>"
+        message: >
+          <b>System successfully initialized.</b>
+          • <b>Time:</b> {{ now().strftime('%Y-%m-%d %H:%M:%S') }}
+          • <b>IP:</b> {{ states('sensor.local_ip') | default('Local Host') }}
+          • <b>Status:</b> All monitoring automations armed.
+        data:
+          parse_mode: html
+
+# 2. Critical High CPU / Memory Alert (Debounced 3 minutes)
+- id: ha_high_resource_alert
+  alias: "System: High CPU or Memory Alert"
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.processor_use
+      above: 85
+      for:
+        minutes: 3
+    - platform: numeric_state
+      entity_id: sensor.memory_use_percent
+      above: 90
+      for:
+        minutes: 3
+  action:
+    - service: notify.telegram_alert
+      data:
+        title: "⚠️ <b>Resource Warning</b>"
+        message: >
+          <b>Sustained high load detected:</b>
+          • CPU Load: <code>{{ states('sensor.processor_use') }}%</code>
+          • RAM Usage: <code>{{ states('sensor.memory_use_percent') }}%</code>
+        data:
+          parse_mode: html
+
+# 3. Low Disk Space Alert
+- id: ha_low_disk_alert
+  alias: "System: Low Disk Space Alert"
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.disk_use_percent_config
+      above: 88
+  action:
+    - service: notify.telegram_alert
+      data:
+        title: "🚨 <b>Storage Alert: Disk > 88%</b>"
+        message: >
+          Host storage is nearing capacity!
+          • Current Usage: <code>{{ states('sensor.disk_use_percent_config') }}%</code>
+          • Action Required: Clean old logs / snapshots.
+        data:
+          parse_mode: html
+
+# 4. Internet Connectivity Lost / Restored
+- id: ha_internet_lost_alert
+  alias: "Network: Internet Connection Lost"
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.internet_connectivity
+      to: "off"
+      for:
+        minutes: 1
+  action:
+    - service: notify.telegram_alert
+      data:
+        title: "🔴 <b>WAN Connection Drop</b>"
+        message: "External ping to 1.1.1.1 failed for > 60 seconds."
+
+- id: ha_internet_restored_alert
+  alias: "Network: Internet Restored"
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.internet_connectivity
+      to: "on"
+      from: "off"
+  action:
+    - service: notify.telegram_alert
+      data:
+        title: "🟢 <b>WAN Connection Restored</b>"
+        message: "External Internet connectivity re-established."
